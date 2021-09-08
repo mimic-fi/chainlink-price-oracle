@@ -21,8 +21,8 @@ import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
-import "@mimic-fi/v1-core/contracts/libraries/FixedPoint.sol";
-import "@mimic-fi/v1-core/contracts/interfaces/IPriceOracle.sol";
+import "@mimic-fi/v1-vault/contracts/libraries/FixedPoint.sol";
+import "@mimic-fi/v1-vault/contracts/interfaces/IPriceOracle.sol";
 
 contract ChainLinkPriceOracle is IPriceOracle, Ownable, ReentrancyGuard {
     using FixedPoint for uint256;
