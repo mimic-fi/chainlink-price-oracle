@@ -47,18 +47,7 @@ contract ChainLinkPriceOracle is IPriceOracle, Ownable, ReentrancyGuard {
             address token = tokens[i];
             AggregatorV3Interface feed = feeds[i];
 
-            // This version of the price oracle only handles 18 decimals prices
-            // If a price feed is address 0x11..11, it will have a price of one
-            bool worksWith18Decimals = address(feed) == PRICE_ONE_FEED ||
-                address(feed) == address(0) ||
-                feed.decimals() == 18;
-            require(worksWith18Decimals, "INVALID_FEED_DECIMALS");
-
-            uint8 tokenDecimals = IERC20Metadata(token).decimals();
-            ethPriceFeeds[token] = PriceFeed({
-                feed: feed,
-                tokenDecimals: tokenDecimals
-            });
+            _setPriceFeed(token, feed);
         }
     }
 
@@ -130,11 +119,19 @@ contract ChainLinkPriceOracle is IPriceOracle, Ownable, ReentrancyGuard {
     {
         require(ethPriceFeeds[token].feed != feed, "FEED_ALREADY_SET");
 
-        // This version of the price oracle only handles 18 decimals prices
-        // If a price feed is address 0x11..11, it will have a price of one
+        _setPriceFeed(token, feed);
+    }
+
+    //Private
+
+    // This version of the price oracle only handles 18 decimals prices
+    // If a price feed is address 0x11..11, it will have a price of one
+    // If a price feed is address 0x00..00, it will be disabled
+    function _setPriceFeed(address token, AggregatorV3Interface feed) private {
         bool worksWith18Decimals = address(feed) == PRICE_ONE_FEED ||
             address(feed) == address(0) ||
             feed.decimals() == 18;
+
         require(worksWith18Decimals, "INVALID_FEED_DECIMALS");
 
         uint8 tokenDecimals = IERC20Metadata(token).decimals();
