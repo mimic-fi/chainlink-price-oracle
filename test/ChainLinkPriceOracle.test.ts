@@ -1,7 +1,7 @@
+import { assertEvent, bn, deploy, fp, getSigners, ZERO_ADDRESS } from '@mimic-fi/v1-helpers'
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { expect } from 'chai'
 import { Contract } from 'ethers'
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { assertEvent, fp, deploy, bn, ZERO_ADDRESS, getSigners } from '@mimic-fi/v1-helpers'
 
 describe('ChainLinkPriceOracle', () => {
   let oracle: Contract
@@ -173,7 +173,9 @@ describe('ChainLinkPriceOracle', () => {
 
         it('reverts if feed decimals is not 18', async () => {
           const newFeed = await deploy('ChainLinkAggregatorV3', [10])
-          await expect(oracle.connect(from).setPriceFeed(tokenA.address, newFeed.address)).to.be.revertedWith('INVALID_FEED_DECIMALS')
+          await expect(oracle.connect(from).setPriceFeed(tokenA.address, newFeed.address)).to.be.revertedWith(
+            'INVALID_FEED_DECIMALS'
+          )
         })
       })
 
@@ -207,7 +209,9 @@ describe('ChainLinkPriceOracle', () => {
         })
 
         it('reverts', async () => {
-          await expect(oracle.connect(from).setPriceFeed(tokenA.address, feedTokenA.address)).to.be.revertedWith('FEED_ALREADY_SET')
+          await expect(oracle.connect(from).setPriceFeed(tokenA.address, feedTokenA.address)).to.be.revertedWith(
+            'FEED_ALREADY_SET'
+          )
         })
       })
     })
@@ -218,7 +222,9 @@ describe('ChainLinkPriceOracle', () => {
       })
 
       it('reverts', async () => {
-        await expect(oracle.connect(from).setPriceFeed(tokenA.address, feedTokenA.address)).to.be.revertedWith('Ownable: caller is not the owner')
+        await expect(oracle.connect(from).setPriceFeed(tokenA.address, feedTokenA.address)).to.be.revertedWith(
+          'Ownable: caller is not the owner'
+        )
       })
     })
   })
