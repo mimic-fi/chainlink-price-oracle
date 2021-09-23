@@ -24,13 +24,17 @@ const oracle = await deploy('@mimic-fi/v1-chainlink-price-oracle/artifacts/contr
 In order to use a `PriceOracle` you can simply do:
 
 ```solidity
-import '@mimic-fi/v1-vault/contracts/interfaces/IPriceOracle.sol';
+import "@mimic-fi/v1-vault/contracts/interfaces/IPriceOracle.sol";
 
 contract MyContract {
   IPriceOracle connector;
 
-  function getTokenPrice(address token, address base) external returns (uint256)  {
+  function getTokenPrice(address token, address base)
+    external
+    returns (uint256)
+  {
     return oracle.getTokenPrice(token, base);
   }
 }
+
 ```
