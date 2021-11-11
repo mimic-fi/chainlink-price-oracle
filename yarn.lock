@@ -566,10 +566,10 @@
     decimal.js "^10.3.1"
     ethers "^5.0.8"
 
-"@mimic-fi/v1-vault@0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@mimic-fi/v1-vault/-/v1-vault-0.0.1.tgz#dedbc50996e7a7d9e59b8fde30c72376069033d7"
-  integrity sha512-H4TQ3d5HkcX4oGZ7w1eCS8NdTM8K0OmbQvvxOPBFWhZJUn6TSxPxHXymlLoQUEQhl7oFx3UtP2itW7DRvD+LRw==
+"@mimic-fi/v1-vault@0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@mimic-fi/v1-vault/-/v1-vault-0.0.4.tgz#f5da8ae144979d3fc4ff500f1c1b9c06e1f14dfa"
+  integrity sha512-u+VjOWAaIBxUMKYcI9HxEZRRncedjZccl/Fb+kfqoDO6vFGJ7DheS3a24IjHtV+7l2T/V2RMsoQyD609+Z/QhQ==
   dependencies:
     "@openzeppelin/contracts" "^4.1.0"
 
