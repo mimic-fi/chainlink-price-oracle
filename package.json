@@ -17,7 +17,8 @@
     "lint": "yarn lint:solidity && yarn lint:typescript",
     "lint:solidity": "solhint 'contracts/**/*.sol' --config ./node_modules/solhint-config-mimic/index.js",
     "lint:typescript": "eslint . --ext .ts",
-    "test": "hardhat test",
+    "test": "hardhat test ./test/*.ts",
+    "test:fork": "yarn test --fork mainnet --block-number 13673796",
     "prepublish": "yarn build"
   },
   "dependencies": {
@@ -38,6 +39,7 @@
     "ethereum-waffle": "^3.3.0",
     "ethers": "^5.0.8",
     "hardhat": "^2.4.1",
+    "hardhat-local-networks-config-plugin": "0.0.5",
     "mocha": "^6.2.3",
     "solhint-config-mimic": "^0.0.1",
     "ts-node": "^8.5.4",

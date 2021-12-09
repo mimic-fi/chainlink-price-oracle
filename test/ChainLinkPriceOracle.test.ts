@@ -13,7 +13,7 @@ describe('ChainLinkPriceOracle', () => {
 
   beforeEach('create oracle', async () => {
     // eslint-disable-next-line prettier/prettier
-    [admin, other] = await getSigners()
+    ;[admin, other] = await getSigners()
 
     tokenA = await deploy('TokenMock', ['TokenA', 18])
     tokenB = await deploy('TokenMock', ['TokenB', 18])
