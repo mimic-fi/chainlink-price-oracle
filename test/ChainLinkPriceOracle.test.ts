@@ -164,7 +164,7 @@ describe('ChainLinkPriceOracle', () => {
           const feedBefore = await oracle.getPriceFeed(newToken.address)
           expect(feedBefore.feed).to.be.equal(ZERO_ADDRESS)
 
-          await oracle.connect(from).setPriceFeed(newToken.address, newFeed.address)
+          await oracle.connect(from).setPriceFeeds([newToken.address], [newFeed.address])
 
           const feedAfter = await oracle.getPriceFeed(newToken.address)
           expect(feedAfter.feed).to.be.equal(newFeed.address)
@@ -173,7 +173,7 @@ describe('ChainLinkPriceOracle', () => {
 
         it('reverts if feed decimals is not 18', async () => {
           const newFeed = await deploy('ChainLinkAggregatorV3', [10])
-          await expect(oracle.connect(from).setPriceFeed(tokenA.address, newFeed.address)).to.be.revertedWith(
+          await expect(oracle.connect(from).setPriceFeeds([tokenA.address], [newFeed.address])).to.be.revertedWith(
             'INVALID_FEED_DECIMALS'
           )
         })
@@ -187,7 +187,7 @@ describe('ChainLinkPriceOracle', () => {
 
           const newFeed = await deploy('ChainLinkAggregatorV3', [18])
 
-          await oracle.connect(from).setPriceFeed(tokenA.address, newFeed.address)
+          await oracle.connect(from).setPriceFeeds([tokenA.address], [newFeed.address])
 
           const feedAfter = await oracle.getPriceFeed(tokenA.address)
           expect(feedAfter.feed).to.be.equal(newFeed.address)
@@ -197,21 +197,19 @@ describe('ChainLinkPriceOracle', () => {
         it('emits an event', async () => {
           const newFeed = await deploy('ChainLinkAggregatorV3', [18])
 
-          const tx = await oracle.connect(from).setPriceFeed(tokenA.address, newFeed.address)
+          const tx = await oracle.connect(from).setPriceFeeds([tokenA.address], [newFeed.address])
           await assertEvent(tx, 'PriceFeedSet', { token: tokenA.address, feed: newFeed.address })
         })
 
         it('unsets the price oracle', async () => {
-          await oracle.connect(from).setPriceFeed(tokenA.address, ZERO_ADDRESS)
+          await oracle.connect(from).setPriceFeeds([tokenA.address], [ZERO_ADDRESS])
 
           const feedAfter = await oracle.getPriceFeed(tokenA.address)
           expect(feedAfter.feed).to.be.equal(ZERO_ADDRESS)
         })
 
-        it('reverts', async () => {
-          await expect(oracle.connect(from).setPriceFeed(tokenA.address, feedTokenA.address)).to.be.revertedWith(
-            'FEED_ALREADY_SET'
-          )
+        it('can be re set', async () => {
+          await expect(oracle.connect(from).setPriceFeeds([tokenA.address], [feedTokenA.address])).not.to.be.reverted
         })
       })
     })
@@ -222,7 +220,7 @@ describe('ChainLinkPriceOracle', () => {
       })
 
       it('reverts', async () => {
-        await expect(oracle.connect(from).setPriceFeed(tokenA.address, feedTokenA.address)).to.be.revertedWith(
+        await expect(oracle.connect(from).setPriceFeeds([tokenA.address], [feedTokenA.address])).to.be.revertedWith(
           'Ownable: caller is not the owner'
         )
       })
