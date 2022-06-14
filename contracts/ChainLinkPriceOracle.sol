@@ -38,7 +38,7 @@ contract ChainLinkPriceOracle is IPriceOracle, Ownable, ReentrancyGuard {
     /**
      * @dev Feed data associated to each token
      * @param tokenDecimals Tells the decimals used for a token
-     * @param feed Tells the address of the ETH-quoted ChainLink feed used for the token
+     * @param feed Tells the address of the ETH-quoted ChainLink feed used for a token
      */
     struct PriceFeed {
         uint8 tokenDecimals;
@@ -120,7 +120,7 @@ contract ChainLinkPriceOracle is IPriceOracle, Ownable, ReentrancyGuard {
     }
 
     /**
-     * @dev Internal method to tell the latest price reported in a ChainLink feed
+     * @dev Internal method to tell the latest price reported by a ChainLink feed
      * @param feed ChainLink feed being queried
      */
     function _getAggregatorPrice(AggregatorV3Interface feed) internal view returns (uint256) {
@@ -143,7 +143,7 @@ contract ChainLinkPriceOracle is IPriceOracle, Ownable, ReentrancyGuard {
     /**
      * @dev Internal method to set an ETH-quoted ChainLink feed for a token
      * This version of the price oracle only handles prices expressed with 18 decimals
-     * If the feed is address 0x11..11, it will have a price of one
+     * If the feed is address 0x11..11, it will have a constant price of one
      * If the feed is address 0x00..00, it will be disabled
      * @param token Token whose feed will be updated
      * @param feed ETH-quoted ChainLink feed to be set
