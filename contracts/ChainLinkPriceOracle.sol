@@ -15,13 +15,13 @@
 pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
-import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import '@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol';
 import '@openzeppelin/contracts/utils/math/SafeCast.sol';
+import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 
 import '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
+import '@chainlink/contracts/src/v0.8/interfaces/FeedRegistryInterface.sol';
 
-import '@mimic-fi/v1-vault/contracts/libraries/FixedPoint.sol';
 import '@mimic-fi/v1-vault/contracts/interfaces/IPriceOracle.sol';
 
 /**
@@ -29,131 +29,77 @@ import '@mimic-fi/v1-vault/contracts/interfaces/IPriceOracle.sol';
  * @dev This price oracle contract allows anyone to query prices between two arbitrary tokens if these have
  *      been previously configured in the oracle itself.
  */
-contract ChainLinkPriceOracle is IPriceOracle, Ownable, ReentrancyGuard {
-    using FixedPoint for uint256;
-
-    // Feed to use when price is one
-    address internal constant PRICE_ONE_FEED = 0x1111111111111111111111111111111111111111;
-
+contract ChainLinkPriceOracle is IPriceOracle, Ownable {
     /**
-     * @dev Feed data associated to each token
-     * @param tokenDecimals Tells the decimals used for a token
-     * @param feed Tells the address of the ETH-quoted ChainLink feed used for a token
+     * @dev Emitted every time a new custom feed is set for a (base, quote) pair
      */
-    struct PriceFeed {
-        uint8 tokenDecimals;
-        AggregatorV3Interface feed;
-    }
+    event CustomFeedSet(address indexed base, address indexed quote, AggregatorV3Interface feed);
 
-    /**
-     * @dev Emitted every time a new feed is set for a token
-     */
-    event PriceFeedSet(address indexed token, AggregatorV3Interface feed);
+    // ChainLink feeds registry reference
+    FeedRegistryInterface public immutable registry;
 
-    // List of feeds data indexed by token address
-    mapping (address => PriceFeed) internal ethPriceFeeds;
+    // List of custom feeds set per (base, quote) pair
+    mapping (address => mapping (address => AggregatorV3Interface)) public customFeeds;
 
     /**
      * @dev Initializes the price oracle contract
-     * @param tokens Initial set of tokens to be configured
-     * @param feeds Initial set of ChainLink feeds to be configured for each token
+     * @param _registry ChainLink feeds registry instance
      */
-    constructor(address[] memory tokens, AggregatorV3Interface[] memory feeds) {
-        require(tokens.length == feeds.length, 'INVALID_FEEDS_LENGTH');
-        for (uint256 i = 0; i < tokens.length; i++) {
-            _setPriceFeed(tokens[i], feeds[i]);
-        }
+    constructor(FeedRegistryInterface _registry) {
+        registry = _registry;
     }
 
     /**
-     * @dev Sets a ChainLink feed for a token
-     * @param token Token whose feed will be updated
-     * @param feed ETH-quoted ChainLink feed to be set
+     * @dev Sets a custom feed for a (base, quote) pair
+     * @param base Token to rate
+     * @param quote Token used for the price rate
+     * @param feed Custom feed to set
      */
-    function setPriceFeed(address token, AggregatorV3Interface feed) public nonReentrant onlyOwner {
-        require(ethPriceFeeds[token].feed != feed, 'FEED_ALREADY_SET');
-        _setPriceFeed(token, feed);
+    function setCustomFeed(address base, address quote, AggregatorV3Interface feed) external onlyOwner {
+        customFeeds[base][quote] = feed;
+        emit CustomFeedSet(base, quote, feed);
     }
 
     /**
-     * @dev Tells if there is a price feed set for a token
-     * @param token Token being queried
-     */
-    function hasPriceFeed(address token) external view returns (bool) {
-        return address(getPriceFeed(token).feed) != address(0);
-    }
-
-    /**
-     * @dev Tells the price feed data associated to a token
-     * @param token Token being queried
-     */
-    function getPriceFeed(address token) public view returns (PriceFeed memory) {
-        return ethPriceFeeds[token];
-    }
-
-    /**
-     * @dev Tells the price of a token in a given quote
-     * @param token Token being queried
+     * @dev Tells if there is a custom feed set for a (base, quote) pair
+     * @param base Token to rate
      * @param quote Token used for the price rate
      */
-    function getTokenPrice(address token, address quote) external view override returns (uint256) {
-        (uint256 tokenPrice, uint8 tokenDecimals) = _getEthPriceIn(token);
-        (uint256 quotePrice, uint8 quoteDecimals) = _getEthPriceIn(quote);
+    function hasCustomFeed(address base, address quote) external view returns (bool) {
+        return address(customFeeds[base][quote]) != address(0);
+    }
 
-        // Price is token/quote = (ETH/quote) / (ETH/token)
-        uint256 unscaledPrice = quotePrice.div(tokenPrice);
+    /**
+     * @dev Tells the price of a token (base) in a given quote. The response is expressed using the corresponding
+     *      number of decimals so that when performing a fixed point product of it by a `quote` amount it results in
+     *      a value expressed in `base` decimals. For example, if `base` is USDC and `quote` is ETH, then the
+     *      returned value is expected to be expressed using 6 decimals.
+     *      Note that custom feeds are used if set, otherwise it fallbacks to ChainLink feeds registry.
+     * @param base Token to rate
+     * @param quote Token used for the price rate
+     */
+    function getTokenPrice(address base, address quote) external view override returns (uint256) {
+        // If `quote * result / 1e18` must be expressed in base decimals, then
+        uint8 baseDecimals = IERC20Metadata(base).decimals();
+        uint8 quoteDecimals = IERC20Metadata(quote).decimals();
+        require(baseDecimals + 18 >= quoteDecimals, 'QUOTE_DECIMALS_TOO_BIG');
+        uint256 resultDecimals = baseDecimals + 18 - quoteDecimals;
 
+        int256 priceInt;
+        uint8 feedDecimals;
+        AggregatorV3Interface feed = customFeeds[base][quote];
+        if (address(feed) != address(0)) {
+            (, priceInt, , , ) = feed.latestRoundData();
+            feedDecimals = feed.decimals();
+        } else {
+            (, priceInt, , , ) = registry.latestRoundData(base, quote);
+            feedDecimals = registry.decimals(base, quote);
+        }
+
+        uint256 price = SafeCast.toUint256(priceInt);
         return
-            tokenDecimals > quoteDecimals
-                ? (unscaledPrice * 10**(tokenDecimals - quoteDecimals))
-                : (unscaledPrice / 10**(quoteDecimals - tokenDecimals));
-    }
-
-    /**
-     * @dev Internal method to tell the price of a token expressed in ETH
-     * @param token Token being queried
-     */
-    function _getEthPriceIn(address token) internal view returns (uint256 price, uint8 tokenDecimals) {
-        AggregatorV3Interface feed;
-        (feed, tokenDecimals) = _getPriceFeed(token);
-        price = _getAggregatorPrice(feed);
-    }
-
-    /**
-     * @dev Internal method to tell the latest price reported by a ChainLink feed
-     * @param feed ChainLink feed being queried
-     */
-    function _getAggregatorPrice(AggregatorV3Interface feed) internal view returns (uint256) {
-        if (address(feed) == PRICE_ONE_FEED) return FixedPoint.ONE;
-        (, int256 priceInt, , , ) = feed.latestRoundData();
-        return SafeCast.toUint256(priceInt);
-    }
-
-    /**
-     * @dev Internal method to fetch the ETH-quoted ChainLink feed for a token. It reverts if the feed is not set.
-     * @param token Token being queried
-     */
-    function _getPriceFeed(address token) internal view returns (AggregatorV3Interface feed, uint8 tokenDecimals) {
-        PriceFeed memory priceFeed = getPriceFeed(token);
-        feed = priceFeed.feed;
-        tokenDecimals = priceFeed.tokenDecimals;
-        require(address(feed) != address(0), 'TOKEN_WITH_NO_FEED');
-    }
-
-    /**
-     * @dev Internal method to set an ETH-quoted ChainLink feed for a token
-     * This version of the price oracle only handles prices expressed with 18 decimals
-     * If the feed is address 0x11..11, it will have a constant price of one
-     * If the feed is address 0x00..00, it will be disabled
-     * @param token Token whose feed will be updated
-     * @param feed ETH-quoted ChainLink feed to be set
-     */
-    function _setPriceFeed(address token, AggregatorV3Interface feed) private {
-        bool uses18Decimals = address(feed) == PRICE_ONE_FEED || address(feed) == address(0) || feed.decimals() == 18;
-        require(uses18Decimals, 'INVALID_FEED_DECIMALS');
-
-        uint8 tokenDecimals = IERC20Metadata(token).decimals();
-        ethPriceFeeds[token] = PriceFeed({ feed: feed, tokenDecimals: tokenDecimals });
-        emit PriceFeedSet(token, feed);
+            resultDecimals >= feedDecimals
+                ? (SafeMath.mul(price, 10**(resultDecimals - feedDecimals)))
+                : (SafeMath.div(price, 10**(feedDecimals - resultDecimals)));
     }
 }
