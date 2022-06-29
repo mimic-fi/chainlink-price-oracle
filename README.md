@@ -1,40 +1,80 @@
-# Chainlink Price Oracle
+<h1 align="center">
+  <a href="https://mimic.fi"><img src="https://www.mimic.fi/static/media/navbar-logo.d79d70dab1c7bd176b11b74829ed33e7.svg" alt="Mimic Finance" width="200"></a> 
+</h1>
 
-[![CI](https://github.com/mimic-fi/chainlink-price-oracle/actions/workflows/ci.yml/badge.svg)](https://github.com/mimic-fi/chainlink-price-oracle/actions/workflows/ci.yml)
-[![npm version](https://img.shields.io/npm/v/@mimic-fi/chainlink-price-oracle/latest.svg)](https://www.npmjs.com/package/@mimic-fi/v1-chainlink-price-oracle/v/latest)
+<h4 align="center">An automated treasury management protocol.</h4>
 
-This repository contains an implementation of the Vault's [PriceOracle](https://github.com/mimic-fi/core/blob/master/packages/vault/contracts/interfaces/IPriceOracle.sol).
-The `PriceOracle` is part of the core architecture and is in charge of providing an interface to rate a token based on another token to the Vault.
+<p align="center">
+  <a href="https://github.com/mimic-fi/chainlink-price-oracle/actions/workflows/ci.yml">
+    <img src="https://github.com/mimic-fi/chainlink-price-oracle/actions/workflows/ci.yml/badge.svg" alt="CI">
+  </a>
+  <a href="https://badge.fury.io/js/@mimic-fi%2Fv1-chainlink-price-oracle">
+    <img src="https://badge.fury.io/js/@mimic-fi%2Fv1-chainlink-price-oracle.svg" alt="NPM">
+  </a>
+  <a href="https://discord.gg/zN2QkTB3">
+    <img src="https://img.shields.io/discourse/status?server=https%3A%2F%2Fmeta.discourse.org" alt="Discord">
+  </a>
+  <a href="./LICENSE">
+    <img src="https://img.shields.io/badge/license-GLP_3.0-green">
+  </a>
+</p>
+
+<p align="center">
+  <a href="#content">Content</a> •
+  <a href="#setup">Setup</a> •
+  <a href="#security">Security</a> •
+  <a href="#license">License</a>
+</p>
+
+---
+
+## Content
+
+This repository contains the implementation of the on-chain price oracle used by the Mimic protocol.
+The Price Oracle is part of the core architecture and is in charge of providing an interface to query token prices.
 This can be achieved using any type of on-chain oracle, then this repo provides a simple implementation using Chainlink V3.
 
-## Deployment
+## Setup
 
-In order to deploy this smart contract locally you can simply do:
+To set up this project you'll need [git](https://git-scm.com) and [yarn](https://classic.yarnpkg.com) installed.
+From your command line:
 
-```ts
-import { deploy } from '@mimic-fi/v1-helpers'
+```bash
+# Clone this repository
+$ git clone https://github.com/mimic-fi/chainlink-price-oracle
 
-const tokens = [...]
-const priceFeeds = [...]
-const oracle = await deploy('@mimic-fi/v1-chainlink-price-oracle/artifacts/contracts/ChainlinkPriceOracle.sol/ChainlinkPriceOracle', [tokens, priceFeeds])
+# Go into the repository
+$ cd chainlink-price-oracle
+
+# Install dependencies
+$ yarn
+
+# Run tests to make sure everything is properly set up
+$ yarn test
 ```
 
-## Development
+## Security
 
-In order to use a `PriceOracle` you can simply do:
+<blockquote style="background: rgba(197,127,66,0.34); border: #ffffff6b; text: #f5fffa">
+  <h5 style="color: rgba(225,111,12,0.82)">⚠️ Auditing</h5>
+  <p>The status of our contracts are considered as experimental and should be used at your own risk.</p>
+</blockquote>
 
-```solidity
-import "@mimic-fi/v1-vault/contracts/interfaces/IPriceOracle.sol";
+Even though all our smart contracts have been reviewed and supervised with security researchers, currently we are going
+through a formal audit process with one of the top firms in the industry. We will disclose the results and takeovers as
+soon as we finish the process.
 
-contract MyContract {
-  IPriceOracle connector;
+Hopefully soon we will be able to communicate a bug bounty program for the hacker community. However, if you found any
+potential issue in any of our smart contracts or in any piece of code you consider critical for the safety of the
+protocol, please contact us through <a href="mailto:security@mimic.fi">security@mimic.fi</a>.
 
-  function getTokenPrice(address token, address base)
-    external
-    returns (uint256)
-  {
-    return oracle.getTokenPrice(token, base);
-  }
-}
+## License
 
-```
+GPL 3.0
+
+---
+
+> Website [mimic.fi](https://mimic.fi) &nbsp;&middot;&nbsp;
+> GitHub [@mimic-fi](https://github.com/mimic-fi) &nbsp;&middot;&nbsp;
+> Twitter [@mimicfi](https://twitter.com/mimicfi) &nbsp;&middot;&nbsp;
+> Discord [mimic](https://discord.gg/zN2QkTB3)
