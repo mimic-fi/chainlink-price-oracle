@@ -14,18 +14,19 @@
 
 pragma solidity ^0.8.0;
 
+import '@mimic-fi/v1-helpers/contracts/math/FixedPoint.sol';
+
+import '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
+
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import '@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol';
 import '@openzeppelin/contracts/utils/math/SafeCast.sol';
 
-import '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
-
-import '@mimic-fi/v1-vault/contracts/libraries/FixedPoint.sol';
-import '@mimic-fi/v1-vault/contracts/interfaces/IPriceOracle.sol';
+import './IPriceOracle.sol';
 
 /**
- * @title ChainLinkPriceOracle
+ * @title PriceOracle
  * @dev This price oracle contract allows anyone to query prices between two arbitrary tokens if these have
  *      been previously configured in the oracle itself.
  */
@@ -101,7 +102,7 @@ contract ChainLinkPriceOracle is IPriceOracle, Ownable, ReentrancyGuard {
         (uint256 quotePrice, uint8 quoteDecimals) = _getEthPriceIn(quote);
 
         // Price is token/quote = (ETH/quote) / (ETH/token)
-        uint256 unscaledPrice = quotePrice.div(tokenPrice);
+        uint256 unscaledPrice = quotePrice.divDown(tokenPrice);
 
         return
             tokenDecimals > quoteDecimals

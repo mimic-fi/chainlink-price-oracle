@@ -557,21 +557,17 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.0.tgz#87de7af9c231826fdd68ac7258f77c429e0e5fcf"
   integrity sha512-wdppn25U8z/2yiaT6YGquE6X8sSv7hNMWSXYSSU1jGv/yd6XqjXgTDJ8KP4NgjTXfJ3GbRjeeb8RTV7a/VpM+w==
 
-"@mimic-fi/v1-helpers@0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@mimic-fi/v1-helpers/-/v1-helpers-0.0.4.tgz#44287c0994edc12a4895433861f16be0742ca4c8"
-  integrity sha512-rDwfp8ePPCdcPZPD8nSm8fyl2ynI3hBYAbvL9u+JVuVL7oDnqOy4ORtyazWHVVkljDLssDon5yJpcZzIFihvww==
+"@mimic-fi/v1-helpers@0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@mimic-fi/v1-helpers/-/v1-helpers-0.0.12.tgz#5381433d4c5a4c44fc0f5af09547f46a1d7c629b"
+  integrity sha512-Xmt/eRTsS0XboM5EeDrbR9JAAhkQ4aBZHAQrhWdxcps7kezITbhhHSiwa4bIKgTO/u/oc8s//mKz6pMz+I+Nhw==
   dependencies:
     "@nomiclabs/hardhat-ethers" "^2.0.2"
+    "@types/chai" "^4.2.18"
+    "@types/mocha" "^8.2.2"
+    chai "^4.2.0"
     decimal.js "^10.3.1"
     ethers "^5.0.8"
-
-"@mimic-fi/v1-vault@0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@mimic-fi/v1-vault/-/v1-vault-0.0.6.tgz#8cdd3bacc47d450cd35afd417876d6ecd36cad77"
-  integrity sha512-qfwHw6HdnNMoI0v1cRGDA/TsdvmlJftzFCzx/NGrFPz4GRG8ivDQI+aGz6OGIl0C7kbzKcO7WQLaO7e91lU8IQ==
-  dependencies:
-    "@openzeppelin/contracts" "^4.1.0"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -607,15 +603,10 @@
     "@types/sinon-chai" "^3.2.3"
     "@types/web3" "1.0.19"
 
-"@openzeppelin/contracts@4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.1.0.tgz#baec89a7f5f73e3d8ea582a78f1980134b605375"
-  integrity sha512-TihZitscnaHNcZgXGj9zDLDyCqjziytB4tMCwXq0XimfWkAjBYyk5/pOsDbbwcavhlc79HhpTEpQcrMnPVa1mw==
-
-"@openzeppelin/contracts@^4.1.0":
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.3.1.tgz#c01f791ce6c9d3989ac1a643267501dbe336b9e3"
-  integrity sha512-QjgbPPlmDK2clK1hzjw2ROfY8KA5q+PfhDUUxZFEBCZP9fi6d5FuNoh/Uq0oCTMEKPmue69vhX2jcl0N/tFKGw==
+"@openzeppelin/contracts@4.7.0":
+  version "4.7.0"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.7.0.tgz#3092d70ea60e3d1835466266b1d68ad47035a2d5"
+  integrity sha512-52Qb+A1DdOss8QvJrijYYPSf32GUg2pGaG/yCxtaA3cu4jduouTdg4XZSMLW9op54m1jH7J8hoajhHKOPsoJFw==
 
 "@resolver-engine/core@^0.3.3":
   version "0.3.3"

@@ -3,7 +3,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { expect } from 'chai'
 import { Contract } from 'ethers'
 
-describe('ChainLinkPriceOracle', () => {
+describe('PriceOracle', () => {
   let oracle: Contract
   let tokenA: Contract, tokenB: Contract, tokenC: Contract, tokenD: Contract
   let feedTokenA: Contract, feedTokenC: Contract, feedTokenD: Contract

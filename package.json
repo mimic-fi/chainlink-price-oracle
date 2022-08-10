@@ -1,5 +1,5 @@
 {
-  "name": "@mimic-fi/v1-chainlink-price-oracle",
+  "name": "@mimic-fi/v1-price-oracle",
   "version": "0.0.4",
   "license": "GPL-3.0",
   "engines": {
@@ -22,11 +22,10 @@
   },
   "dependencies": {
     "@chainlink/contracts": "^0.2.1",
-    "@mimic-fi/v1-vault": "0.0.6",
+    "@mimic-fi/v1-helpers": "0.0.12",
     "@openzeppelin/contracts": "4.7.0"
   },
   "devDependencies": {
-    "@mimic-fi/v1-helpers": "0.0.4",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "@types/chai": "^4.2.18",
