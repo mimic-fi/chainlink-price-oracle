@@ -28,7 +28,7 @@ describe('PriceOracle', () => {
     // Token B price is always 1
     const feeds = [feedTokenA.address, PRICE_ONE_FEED, feedTokenC.address, feedTokenD.address]
 
-    oracle = await deploy('ChainLinkPriceOracle', [tokens, feeds])
+    oracle = await deploy('PriceOracle', [tokens, feeds])
   })
 
   describe('deploy', () => {

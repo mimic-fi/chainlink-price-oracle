@@ -30,7 +30,7 @@ import './IPriceOracle.sol';
  * @dev This price oracle contract allows anyone to query prices between two arbitrary tokens if these have
  *      been previously configured in the oracle itself.
  */
-contract ChainLinkPriceOracle is IPriceOracle, Ownable, ReentrancyGuard {
+contract PriceOracle is IPriceOracle, Ownable, ReentrancyGuard {
     using FixedPoint for uint256;
 
     // Feed to use when price is one
