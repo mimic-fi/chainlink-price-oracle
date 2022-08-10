@@ -5,11 +5,11 @@
 <h4 align="center">A DeFi automation platform</h4>
 
 <p align="center">
-  <a href="https://github.com/mimic-fi/chainlink-price-oracle/actions/workflows/ci.yml">
-    <img src="https://github.com/mimic-fi/chainlink-price-oracle/actions/workflows/ci.yml/badge.svg" alt="CI">
+  <a href="https://github.com/mimic-fi/price-oracle/actions/workflows/ci.yml">
+    <img src="https://github.com/mimic-fi/price-oracle/actions/workflows/ci.yml/badge.svg" alt="CI">
   </a>
-  <a href="https://badge.fury.io/js/@mimic-fi%2Fv1-chainlink-price-oracle">
-    <img src="https://badge.fury.io/js/@mimic-fi%2Fv1-chainlink-price-oracle.svg" alt="NPM">
+  <a href="https://badge.fury.io/js/@mimic-fi%2Fv1-price-oracle">
+    <img src="https://badge.fury.io/js/@mimic-fi%2Fv1-price-oracle.svg" alt="NPM">
   </a>
   <a href="https://discord.mimic.fi">
     <img src="https://img.shields.io/discourse/status?server=https%3A%2F%2Fmeta.discourse.org" alt="Discord">
@@ -41,10 +41,10 @@ From your command line:
 
 ```bash
 # Clone this repository
-$ git clone https://github.com/mimic-fi/chainlink-price-oracle
+$ git clone https://github.com/mimic-fi/price-oracle
 
 # Go into the repository
-$ cd chainlink-price-oracle
+$ cd price-oracle
 
 # Install dependencies
 $ yarn
